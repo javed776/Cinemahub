@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b13">
+<title>CinemaHub — Discover Movies</title>
+<style>
+:root{--bg:#090b13;--panel:#121624;--panel2:#191f30;--text:#f5f6fb;--muted:#9ba4b8;--accent:#ffb52e;--line:#293044}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#26304d 0,transparent 45%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{position:sticky;top:0;z-index:5;background:#090b13eF;backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.nav{max-width:1180px;margin:auto;padding:15px 22px;display:flex;align-items:center;gap:22px}
+.logo{font-size:23px;font-weight:900;letter-spacing:-1px;white-space:nowrap}.logo span{color:var(--accent)}
+nav{display:flex;gap:18px;margin-left:18px}nav a{color:var(--muted);text-decoration:none;font-size:14px}nav a:hover{color:white}
+.spacer{flex:1}.lang{background:var(--panel2);color:white;border:1px solid var(--line);padding:9px 12px;border-radius:10px}
+main{max-width:1180px;margin:auto;padding:30px 22px 70px}
+.hero{min-height:290px;border:1px solid #333d58;border-radius:24px;padding:34px;display:flex;align-items:center;overflow:hidden;position:relative;background:linear-gradient(105deg,#222c48 0%,#171e32 55%,#382b20 100%)}
+.hero:after{content:"";position:absolute;width:340px;height:340px;border-radius:50%;right:6%;top:-90px;background:radial-gradient(circle,#ffb52e55,transparent 68%);filter:blur(8px)}
+.hero-content{position:relative;z-index:1;max-width:620px}.eyebrow{color:var(--accent);font-weight:800;letter-spacing:2px;font-size:11px;text-transform:uppercase}
+h1{font-size:clamp(34px,6vw,58px);line-height:1.02;margin:12px 0}.hero p{color:#c4cad8;line-height:1.6;max-width:540px}
+.searchrow{display:flex;gap:10px;margin-top:22px;max-width:560px}.searchrow input{flex:1;min-width:0;background:#0d1220;color:white;border:1px solid #414b64;border-radius:12px;padding:14px 16px;font-size:15px;outline:none}.searchrow input:focus{border-color:var(--accent)}
+.btn{border:0;border-radius:12px;background:var(--accent);color:#17120a;font-weight:800;padding:13px 18px;cursor:pointer}.btn:hover{filter:brightness(1.08)}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:34px 0 16px}.section-head h2{margin:0;font-size:22px}.section-head p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.chip{border:1px solid var(--line);background:var(--panel);color:#cbd1df;border-radius:999px;padding:8px 13px;cursor:pointer;font-size:13px}.chip.active,.chip:hover{background:#3b2d16;border-color:#8b641e;color:#ffd27b}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:17px}
+.movie{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;transition:.2s;cursor:pointer}.movie:hover{transform:translateY(-4px);border-color:#58617a}
+.poster{height:220px;display:flex;align-items:end;padding:13px;position:relative;overflow:hidden;background:linear-gradient(145deg,var(--c1),var(--c2))}
+.poster:before,.poster:after{content:"";position:absolute;border-radius:50%;background:#ffffff17}.poster:before{width:190px;height:190px;right:-45px;top:-50px}.poster:after{width:130px;height:130px;left:-40px;bottom:-55px}
+.poster .symbol{position:absolute;top:27px;left:0;right:0;text-align:center;font-size:64px;filter:drop-shadow(0 8px 12px #0006)}
+.poster strong{z-index:1;font-size:19px;line-height:1.05;text-shadow:0 2px 8px #0009;max-width:90%}
+.info{padding:12px}.title{font-weight:750;font-size:14px}.meta{color:var(--muted);font-size:12px;margin-top:5px}.tag{display:inline-block;color:#ffd27b;background:#3b2d164d;border:1px solid #70521e;border-radius:5px;padding:3px 6px;font-size:10px;margin-top:9px}
+.empty{grid-column:1/-1;color:var(--muted);padding:35px;text-align:center;background:var(--panel);border:1px dashed var(--line);border-radius:14px}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:12px;padding:25px 22px;text-align:center}
+.modal{display:none;position:fixed;inset:0;z-index:10;background:#000b;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.dialog{max-width:480px;width:100%;background:var(--panel);border:1px solid #424b63;border-radius:18px;padding:22px;position:relative}.close{position:absolute;right:15px;top:12px;background:transparent;color:white;border:0;font-size:25px;cursor:pointer}.dialog h2{margin:5px 35px 8px 0}.dialog p{color:#bac2d3;line-height:1.6;font-size:14px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.secondary{background:var(--panel2);border:1px solid var(--line);color:white;text-decoration:none;padding:12px 15px;border-radius:11px;font-size:13px;font-weight:700}
+.note{margin-top:22px;color:var(--muted);font-size:12px;line-height:1.6}
+@media(max-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.poster{height:200px}nav{display:none}}
+@media(max-width:560px){main{padding:18px 14px 45px}.nav{padding:13px 15px}.logo{font-size:20px}.hero{padding:23px;min-height:300px}.searchrow{flex-direction:column}.searchrow .btn{width:100%}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.poster{height:180px}.section-head h2{font-size:19px}}
+
+.admin-wrap{margin-top:36px}.admin-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+.admin-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.admin-form input,.admin-form select,.admin-form textarea{width:100%;min-width:0;background:#0d1220;color:white;border:1px solid #414b64;border-radius:10px;padding:12px;font:inherit}
+.admin-form textarea{grid-column:1/-1;min-height:75px;resize:vertical}
+.admin-form button{justify-self:start}.admin-help{color:var(--muted);font-size:12px;line-height:1.5;margin:14px 0}
+.admin-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:13px}
+.admin-row button{background:#35202a;color:#ffc2c9;border:1px solid #68404b;border-radius:8px;padding:7px 10px;cursor:pointer}
+@media(max-width:560px){.admin-form{grid-template-columns:1fr}.admin-form textarea{grid-column:auto}}
+
+</style>
+</head>
+<body>
+<header><div class="nav"><div class="logo">Cinema<span>Hub</span></div><nav><a href="#home">Home</a><a href="#movies">Movies</a><a href="#about">About</a></nav><div class="spacer"></div><button class="lang" id="langBtn">हिंदी</button></div></header>
+<main id="home">
+<section class="hero"><div class="hero-content"><div class="eyebrow" id="eyebrow">YOUR MOVIE DISCOVERY HUB</div><h1 id="heroTitle">Find your next<br>favourite film.</h1><p id="heroDesc">Explore popular Indian cinema, discover something new, and find official trailers and streaming information — all in one place.</p><div class="searchrow"><input id="search" type="search" placeholder="Search movies, language or genre…"><button class="btn" id="searchBtn">Search</button></div></div></section>
+<div class="section-head" id="movies"><div><h2 id="sectionTitle">Explore Movies</h2><p id="sectionSub">A hand-picked sample collection to get you started</p></div></div>
+<div class="filters" id="filters"></div><div class="grid" id="grid"></div>
+
+<section class="admin-wrap" id="admin">
+  <div class="section-head"><div><h2>Admin Panel</h2><p>Manage your movie catalogue from this browser</p></div></div>
+  <div class="admin-card">
+    <form id="movieForm" class="admin-form">
+      <input id="movieTitle" required maxlength="60" placeholder="Movie title">
+      <input id="movieYear" required type="number" min="1900" max="2100" placeholder="Year">
+      <input id="movieLang" required maxlength="30" placeholder="Language (e.g. Hindi)">
+      <select id="movieGenre"><option>Action</option><option>Drama</option><option>Comedy</option><option>Romance</option><option>Thriller</option></select>
+      <input id="movieSymbol" maxlength="4" placeholder="Poster emoji (e.g. 🎬)">
+      <textarea id="movieDesc" maxlength="240" placeholder="Short movie description"></textarea>
+      <button class="btn" type="submit">Add Movie</button>
+    </form>
+    <div class="admin-help">Demo admin panel: additions are saved only in this browser on this device. There is no password protection or shared online database yet. Do not enter private information.</div>
+    <div id="adminList" class="admin-list"></div>
+  </div>
+</section>
+
+<p class="note" id="about">Note: CinemaHub is a movie discovery demo. It does not host or provide unauthorized movie downloads. Trailer buttons open YouTube search; use official streaming services and licensed sources to watch films.</p>
+</main>
+<footer>© 2026 CinemaHub · Discover movies. Watch legally. · Demo website template</footer>
+<div class="modal" id="modal"><div class="dialog"><button class="close" id="close">×</button><div class="eyebrow">CINEMAHUB MOVIE GUIDE</div><h2 id="modalTitle"></h2><div class="meta" id="modalMeta"></div><p id="modalDesc"></p><div class="actions"><a class="btn" id="trailer" target="_blank" rel="noopener">Find Official Trailer</a><a class="secondary" id="searchInfo" target="_blank" rel="noopener">More information</a></div></div></div>
+<script>
+const movies=[
+ {title:"Dangal",year:2016,lang:"Hindi",genre:"Drama",symbol:"🏅",c1:"#8d562e",c2:"#272d3d",desc:"A sports drama about determination, family, and the journey of two young wrestlers."},
+ {title:"Baahubali: The Beginning",year:2015,lang:"Telugu",genre:"Action",symbol:"⚔️",c1:"#344e68",c2:"#161d2d",desc:"A grand fantasy adventure filled with mystery, courage, and an epic kingdom."},
+ {title:"3 Idiots",year:2009,lang:"Hindi",genre:"Comedy",symbol:"🎓",c1:"#327b78",c2:"#193044",desc:"A comedy-drama about friendship, learning, and finding your own path."},
+ {title:"Sairat",year:2016,lang:"Marathi",genre:"Romance",symbol:"🌾",c1:"#9b563c",c2:"#3d2731",desc:"A Marathi romantic drama exploring young love and social realities."},
+ {title:"RRR",year:2022,lang:"Telugu",genre:"Action",symbol:"🔥",c1:"#9d5427",c2:"#31233a",desc:"A fictional action epic about friendship, bravery, and rebellion."},
+ {title:"Drishyam",year:2015,lang:"Hindi",genre:"Thriller",symbol:"🔎",c1:"#3d665c",c2:"#1b2734",desc:"A suspense thriller about a family caught in an extraordinary situation."},
+ {title:"Kantara",year:2022,lang:"Kannada",genre:"Drama",symbol:"🌳",c1:"#6a5931",c2:"#273b2d",desc:"A folklore-inspired drama rooted in nature, community, and tradition."},
+ {title:"Zindagi Na Milegi Dobara",year:2011,lang:"Hindi",genre:"Drama",symbol:"🌊",c1:"#2c7185",c2:"#26334c",desc:"Three friends take a road trip that changes how they see life."},
+ {title:"Jawan",year:2023,lang:"Hindi",genre:"Action",symbol:"⚡",c1:"#7c333c",c2:"#25283b",desc:"An action entertainer with a story about justice and accountability."},
+ {title:"Court",year:2014,lang:"Marathi",genre:"Drama",symbol:"⚖️",c1:"#6a665a",c2:"#252b35",desc:"An acclaimed courtroom drama examining society and the justice system."}
+];
+let hindi=false,active="All";
+const genres=["All","Action","Drama","Comedy","Romance","Thriller"];
+const grid=document.getElementById("grid"),filters=document.getElementById("filters"),search=document.getElementById("search");
+function renderFilters(){filters.innerHTML="";genres.forEach(g=>{let b=document.createElement("button");b.className="chip"+(active===g?" active":"");b.textContent=g;b.onclick=()=>{active=g;renderFilters();render()};filters.appendChild(b)})}
+function render(){let q=search.value.trim().toLowerCase();let list=movies.filter(m=>(active==="All"||m.genre===active)&&[m.title,m.lang,m.genre,String(m.year)].join(" ").toLowerCase().includes(q));grid.innerHTML="";if(!list.length){grid.innerHTML='<div class="empty">No movies found. Try another search.</div>';return}list.forEach(m=>{let card=document.createElement("article");card.className="movie";card.innerHTML=`<div class="poster" style="--c1:${m.c1};--c2:${m.c2}"><div class="symbol">${m.symbol}</div><strong>${m.title}</strong></div><div class="info"><div class="title">${m.title}</div><div class="meta">${m.year} · ${m.lang}</div><span class="tag">${m.genre}</span></div>`;card.onclick=()=>openMovie(m);grid.appendChild(card)})}
+function openMovie(m){document.getElementById("modalTitle").textContent=m.title;document.getElementById("modalMeta").textContent=`${m.year} · ${m.lang} · ${m.genre}`;document.getElementById("modalDesc").textContent=m.desc;document.getElementById("trailer").href="https://www.youtube.com/results?search_query="+encodeURIComponent(m.title+" official trailer");document.getElementById("searchInfo").href="https://www.google.com/search?q="+encodeURIComponent(m.title+" film official information");document.getElementById("modal").classList.add("show")}
+document.getElementById("close").onclick=()=>document.getElementById("modal").classList.remove("show");document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")e.currentTarget.classList.remove("show")};
+document.getElementById("searchBtn").onclick=render;search.addEventListener("input",render);
+document.getElementById("langBtn").onclick=()=>{hindi=!hindi;document.getElementById("langBtn").textContent=hindi?"English":"हिंदी";document.getElementById("eyebrow").textContent=hindi?"आपकी मूवी खोज की दुनिया":"YOUR MOVIE DISCOVERY HUB";document.getElementById("heroTitle").innerHTML=hindi?"अपनी अगली पसंदीदा<br>फिल्म खोजें।":"Find your next<br>favourite film.";document.getElementById("heroDesc").textContent=hindi?"लोकप्रिय भारतीय फिल्मों को खोजें और आधिकारिक ट्रेलर व देखने की जानकारी पाएं।":"Explore popular Indian cinema, discover something new, and find official trailers and streaming information — all in one place.";document.getElementById("sectionTitle").textContent=hindi?"फिल्में देखें":"Explore Movies";document.getElementById("sectionSub").textContent=hindi?"शुरुआत के लिए चुनी गई फिल्मों का संग्रह":"A hand-picked sample collection to get you started";search.placeholder=hindi?"फिल्म, भाषा या शैली खोजें…":"Search movies, language or genre…";document.querySelector(".note").textContent=hindi?"ध्यान दें: CinemaHub फिल्मों की जानकारी देने वाला डेमो है। यह अनधिकृत डाउनलोड उपलब्ध नहीं कराता। ट्रेलर बटन YouTube खोज खोलता है।":"Note: CinemaHub is a movie discovery demo. It does not host or provide unauthorized movie downloads. Trailer buttons open YouTube search; use official streaming services and licensed sources to watch films."};
+renderFilters();render();
+
+const ADMIN_KEY="cinemahub_custom_movies_v1";
+function getCustomMovies(){try{return JSON.parse(localStorage.getItem(ADMIN_KEY)||"[]")}catch(e){return []}}
+function saveCustomMovies(items){localStorage.setItem(ADMIN_KEY,JSON.stringify(items))}
+function allMovies(){return [...movies,...getCustomMovies()]}
+const originalRender=render;
+render=function(){let q=search.value.trim().toLowerCase();let list=allMovies().filter(m=>(active==="All"||m.genre===active)&&[m.title,m.lang,m.genre,String(m.year)].join(" ").toLowerCase().includes(q));grid.innerHTML="";if(!list.length){grid.innerHTML='<div class="empty">No movies found. Try another search.</div>';return}list.forEach(m=>{let card=document.createElement("article");card.className="movie";card.innerHTML=`<div class="poster" style="--c1:${m.c1||"#46516c"};--c2:${m.c2||"#171e32"}"><div class="symbol">${m.symbol||"🎬"}</div><strong>${m.title}</strong></div><div class="info"><div class="title">${m.title}</div><div class="meta">${m.year} · ${m.lang}</div><span class="tag">${m.genre}</span></div>`;card.onclick=()=>openMovie(m);grid.appendChild(card)})};
+function renderAdmin(){const box=document.getElementById("adminList");const items=getCustomMovies();box.innerHTML=items.length?"<strong>Your added movies</strong>":'<span class="meta">No custom movies added yet.</span>';items.forEach((m,i)=>{const row=document.createElement("div");row.className="admin-row";const label=document.createElement("span");label.textContent=m.title+" · "+m.year+" · "+m.lang;const del=document.createElement("button");del.type="button";del.textContent="Delete";del.onclick=()=>{const next=getCustomMovies();next.splice(i,1);saveCustomMovies(next);render();renderAdmin()};row.append(label,del);box.appendChild(row)})}
+document.getElementById("movieForm").addEventListener("submit",e=>{e.preventDefault();const item={title:document.getElementById("movieTitle").value.trim(),year:Number(document.getElementById("movieYear").value),lang:document.getElementById("movieLang").value.trim(),genre:document.getElementById("movieGenre").value,symbol:document.getElementById("movieSymbol").value.trim()||"🎬",desc:document.getElementById("movieDesc").value.trim()||"Movie details coming soon.",c1:"#485875",c2:"#20283a"};if(!item.title||!item.lang||!Number.isFinite(item.year))return;const items=getCustomMovies();items.push(item);saveCustomMovies(items);e.target.reset();render();renderAdmin();document.getElementById("admin").scrollIntoView({behavior:"smooth"})});
+renderAdmin();
+
+</script>
+</body>
+</html>
